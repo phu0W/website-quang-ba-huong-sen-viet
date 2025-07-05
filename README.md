@@ -70,6 +70,7 @@ mysql -u your_db_username -p your_database_name < database/website_qb.sql
 # Run development server
 php artisan serve
 
-<h3><b>Live Demo</b></h3>
+```
+## Live Demo
 
 🔗 https://doanhuongsenviet.com/
