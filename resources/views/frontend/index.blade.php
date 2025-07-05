@@ -157,7 +157,7 @@
                                                         {{ \Illuminate\Support\Str::limit(html_entity_decode(strip_tags($course->description)), 100) }}
                                                     </p>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="fw-bold">{{ number_format($course->price * 1000, 0, ',', '.') }} VND</span>
+                                                        <span class="fw-bold">{{ number_format($course->price, 0, ',', '.') }} VND</span>
                                                         <a href="{{ route('course.detail', ['course_id' => $course->id]) }}" class="btn btn-outline-success">Xem chi tiết</a>
                                                     </div>
                                                 </div>
