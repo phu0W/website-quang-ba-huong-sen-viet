@@ -10,7 +10,7 @@
 
 ## About the Project
 
-This project aims to build a modern and user-friendly web application that helps **Huong Sen Viet Education Company** promote their courses and connect with students online.
+This project aims to build a modern and user-friendly web application that helps **Huong Sen Viet Education** promote their courses and connect with students online.
 
 
 ---
@@ -46,7 +46,6 @@ This project aims to build a modern and user-friendly web application that helps
 
 ## Installation
 
-```bash
 # Clone the repository
 git clone https://github.com/phu0W/website-quang-ba-huong-sen-viet.git
 
@@ -59,14 +58,17 @@ cp .env.example .env
 
 # Set up database credentials in .env
 
+# Configure SMTP email in .env to enable contact form or password recovery
+
 # Generate application key
 php artisan key:generate
 
-# Run database migrations
-php artisan migrate
-
-# (Optional) Seed some demo data
-php artisan db:seed
+# Import the database
+mysql -u your_db_username -p your_database_name < database/website_qb.sql
 
 # Run development server
 php artisan serve
+
+<h3><b>Live Demo</b></h3>
+
+🔗 https://doanhuongsenviet.com/
