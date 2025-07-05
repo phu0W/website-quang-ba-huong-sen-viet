@@ -46,6 +46,7 @@ This project aims to build a modern and user-friendly web application that helps
 
 ## Installation
 
+```bash
 # Clone the repository
 git clone https://github.com/phu0W/website-quang-ba-huong-sen-viet.git
 
