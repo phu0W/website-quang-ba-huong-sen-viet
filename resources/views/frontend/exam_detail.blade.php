@@ -120,7 +120,7 @@
                             @php
                                 $page = ceil(($index + 1) / $questions->perPage());
                             @endphp
-                            <div class="question-number {{ $index + 1 === 1 ? 'active' : '' }} {{ $question->is_answered ? 'answered' : '' }}" data-question="{{ $question->id }}" data-page="{{ ceil(($index + 1) / $questions->perPage()) }}">
+                            <div class="question-number {{ $index + 1 === 1 ? 'active' : '' }}" data-question="{{ $question->id }}" data-page="{{ ceil(($index + 1) / $questions->perPage()) }}">
                                 {{ $index + 1 }}
                             </div>
                         @endforeach
@@ -193,6 +193,7 @@
     <script>
         const timeleft = {{ $timeleft }};
         const studentExam = {{ $studentExam->id }};
+        const savedAnswersFromDB = @json($savedAnswers);
     </script>
     <script>
     
@@ -267,32 +268,29 @@
         });
     });
     //Khôi phục câu trả lời khi tải lại trang
-    function restoreAnswers() {
-        const questionNumbers = document.querySelectorAll('.question-number');
 
-        questionNumbers.forEach(number => {
-            const questionId = number.getAttribute('data-question');
-            const saved = localStorage.getItem(`question_${studentExam}_${questionId}`);
-            if (saved) {
-                const selected = JSON.parse(saved);
-                if (selected && selected.length > 0) {
-                    number.classList.add('answered');
-                }
+    function restoreAnswers() {
+        document.querySelectorAll('.choice-option input').forEach(input => {
+            const questionId = input.dataset.questionId;
+            const saved = savedAnswersFromDB[questionId];
+
+            if (saved && saved.map(String).includes(input.value)) {
+                input.checked = true;
             }
         });
 
-        // Sau đó, khôi phục trạng thái chọn input (nếu có hiển thị)
-        document.querySelectorAll('.choice-option input').forEach(input => {
-            const questionId = input.dataset.questionId;
-            const saved = localStorage.getItem(`question_${studentExam}_${questionId}`);
-            if (saved) {
-                const selected = JSON.parse(saved);
-                if (selected.includes(input.value)) {
-                    input.checked = true;
-                }
+        // Hiển thị đánh dấu đã chọn trên sidebar/number list
+        document.querySelectorAll('.question-number').forEach(number => {
+            const questionId = number.getAttribute('data-question');
+            const saved = savedAnswersFromDB[questionId];
+            const key = `question_${studentExam}_${questionId}`;
+            if (saved && saved.length > 0) {
+                number.classList.add('answered');
+                localStorage.setItem(key, JSON.stringify(saved));
             }
         });
     }
+
 
     function clearStudentExamStorage() {
         for (let key in localStorage) {
@@ -317,8 +315,7 @@
             if (timeLimit <= 0) {
                 clearInterval(timerInterval);
                 alert("Hết thời gian!");
-                clearStudentExamStorage();
-                document.querySelector('form').submit(); // Tự động nộp
+                document.getElementById('submitBtn').click();
             }
             timeLimit--;
         }, 1000);
@@ -349,7 +346,7 @@
                 answers: answers
             })
         });
-    }, 5000);
+    }, 2000);
 
 
     function formatTime(time) {
@@ -377,9 +374,13 @@
                 if (numberEl) numberEl.classList.add('active');
             }
 
-            localStorage.removeItem('scrollToQuestionId'); // Xoá sau khi cuộn xong
+            localStorage.removeItem('scrollToQuestionId');
         }
     };
+
+    window.addEventListener('beforeunload', function () {
+        clearStudentExamStorage();
+    });
 
     // Lắng nghe sự kiện khi học viên nhấn nút nộp bài
     document.getElementById('submitBtn').addEventListener('click', function () {
@@ -406,7 +407,7 @@
         }
 
         input.value = JSON.stringify(answers);
-        form.appendChild(input);
+        form.appendChild(input); // thêm input vào form
 
         clearStudentExamStorage();
     });

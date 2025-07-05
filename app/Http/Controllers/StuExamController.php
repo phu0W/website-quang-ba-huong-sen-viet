@@ -14,10 +14,19 @@ class StuExamController extends Controller
 {
     public function exam(Exam $exam){
         $student = auth('stu')->user();
+
+        $isEnrolled = $student->enrolledCourses()
+            ->where('course_id', $exam->chapter->course->id)
+            ->exists();
+
+        if (!$isEnrolled && !$exam->is_sample) {
+            return redirect()->back()->with('error', 'Bạn chưa đăng ký khóa học');
+        }
+
         $totalQuestions = $exam->question_count;
         $attempts = StudentExam::where('student_id', $student->id)
         ->where('exam_id', $exam->id)
-        ->orderBy('submitted_at', 'asc')
+        ->orderBy('start_time', 'asc')
         ->get();
         $lastAttempt = $attempts->last();
         $highestScore = $attempts->max('score');
@@ -33,7 +42,7 @@ class StuExamController extends Controller
             ->where('course_id', $exam->chapter->course->id)
             ->exists();
 
-        if (!$isEnrolled) {
+        if (!$isEnrolled && !$exam->is_sample) {
             return redirect()->back()->with('error', 'Bạn chưa đăng ký khóa học');
         }
 
@@ -78,22 +87,25 @@ class StuExamController extends Controller
                 'status'     => 'doing',
             ]);
 
-            // Lưu lại câu hỏi được random vào bảng pivot (giả sử bạn có bảng trung gian `exam_question_student`)
+            // Lưu lại câu hỏi được random vào bảng pivot
             foreach ($selectedQuestions as $question) {
-                $studentExam->questions()->attach($question->id); // requires pivot table student_exam_question
+                $studentExam->questions()->attach($question->id);
             }
         }
 
+        $savedAnswers = StudentTempAnswer::where('student_exam_id', $studentExam->id)//[question_id => answer_ids]
+                        ->get()
+                        ->pluck('answer_ids', 'question_id');
+
         $timeleft = max(0, $studentExam->end_time->diffInSeconds(now()));
 
-        // Lấy câu hỏi từ pivot đã lưu
         $questions = $studentExam->questions()->paginate(3);
         $allQuestions = $studentExam->questions;
         $currentPage = $questions->currentPage();
         $timeLimit = $exam->time;
 
         return view('frontend.exam_detail', compact(
-            'exam', 'studentExam', 'timeLimit', 'questions', 'currentPage', 'allQuestions', 'timeleft'
+            'exam', 'studentExam', 'timeLimit', 'questions', 'currentPage', 'allQuestions', 'timeleft','savedAnswers'
         ));
     }
 
@@ -191,8 +203,6 @@ class StuExamController extends Controller
             abort(403, 'Bạn không có quyền !');
         }
         $exam = $attempt->exam;
-        // $questions = $exam->questions()->with(['answers', 'studentAnswers' => function ($query) use ($attempt) {
-        // $query->where('student_exam_id', $attempt->id);}])->get();
 
         $questions = $attempt->questions()
         ->with([
@@ -201,7 +211,7 @@ class StuExamController extends Controller
                 $query->where('student_exam_id', $attempt->id); //lấy tất cả câu trả lời của học viên
             }
         ])
-        ->get();
+        ->paginate(3);
 
         return view('frontend.exam_review', compact('attempt', 'exam', 'questions'));
     }

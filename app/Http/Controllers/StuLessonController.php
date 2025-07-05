@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 
 class StuLessonController extends Controller
 {
-    
-
     public function lesson(Course $course, Lesson $lesson)
     {
         $student = auth('stu')->user();
@@ -31,49 +29,66 @@ class StuLessonController extends Controller
                         ->orderBy('order_number')
                         ->get();
 
-        // Gom từng chương với items (lessons + exams)
-        $navigationChapters = $chapters->map(function ($chapter) {//map function xử lý phức tạp hơn 1 dòng
-            $lessons = $chapter->lessons->map(fn($l) => [//map => gán luôn 1 dòng
+        $navigationChapters = $chapters->map(function ($chapter) {
+            // Danh sách bài học
+            $lessons = $chapter->lessons->map(fn($l) => [
                 'type' => 'lesson',
                 'id' => $l->id,
                 'model' => $l,
                 'order_number' => $l->order_number,
-            ]);
+            ])->sortBy('order_number')->values();
 
+            // Danh sách bài kiểm tra
             $exams = $chapter->exams->map(fn($e) => [
                 'type' => 'exam',
                 'id' => $e->id,
                 'model' => $e,
                 'order_number' => $e->order_number,
-            ]);
+            ])->sortBy('order_number')->values();
 
             return [
                 'id' => $chapter->id,
                 'title' => $chapter->title,
-                'items' => $lessons->merge($exams)->sortBy('order_number')->values(), //dùng value để reset key về 0,1,2.. tránh lỗi khi duyệt vòng lặp
+                'items' => $lessons->merge($exams),
             ];
         });
+
 
         // Gom tất cả các item vào một danh sách phẳng để xác định vị trí hiện tại
         $flatItems = $navigationChapters->flatMap(fn($c) => $c['items'])->values();
 
         $currentIndex = $flatItems->search(fn($item) => $item['type'] === 'lesson' && $item['id'] === $lesson->id);
-        $previousItem = $flatItems[$currentIndex - 1] ?? null;//null nếu là bài đầu tiên
-
+        $previousItem = $flatItems
+            ->slice(0, $currentIndex)        // lấy các phần tử trước vị trí hiện tại
+            ->reverse()                      // đảo ngược để duyệt từ gần nhất về đầu
+            ->first(fn($item) => $item['type'] === 'lesson');
+        //dd($previousItem);
+        $nextLesson = null;
+        for ($i = $currentIndex + 1; $i < count($flatItems); $i++) {
+            if ($flatItems[$i]['type'] === 'lesson') {
+                $nextLesson = $flatItems[$i]['model'];
+                break;
+            }
+        }
+        $nextLessonUrl = $nextLesson ? route('lesson', ['course' => $course->id, 'lesson' => $nextLesson->id]) : null;
         // Kiểm tra đã hoàn thành bài trước chưa (nếu là bài học)
         $hasCompletedPrev = true;
-        if ($previousItem && $previousItem['type'] === 'lesson') {//nếu có bài trước/bài trước là bài học
+        if ($previousItem && $previousItem['type'] === 'lesson') {
             $hasCompletedPrev = LessonProgress::where('student_id', $student->id)
                 ->where('lesson_id', $previousItem['id'])
                 ->whereNotNull('completed_at')
                 ->exists();
         }
+        $isCompletedCurrent = LessonProgress::where('student_id', $student->id)
+            ->where('lesson_id', $lesson->id)
+            ->whereNotNull('completed_at')
+            ->exists();
 
         // Kiểm tra quyền xem
-        $canView = $lesson->is_sample || $isEnrolled;
+        //$canView = $lesson->is_sample || $isEnrolled;
         
-        if ($canView) {
-            if ($currentIndex === 0 || $hasCompletedPrev) {//bài đầu không cần check tiến độ bài trước
+        if ($isEnrolled) {
+            if ($currentIndex === 0 || $hasCompletedPrev) {
                 return view('frontend.video', [
                     'lesson' => $lesson,
                     'course' => $course,
@@ -81,10 +96,25 @@ class StuLessonController extends Controller
                     'currentLessonId' => $lesson->id,
                     'isEnrolled' => $isEnrolled,
                     'completedLessonIds' => $completedLessonIds,
+                    'nextLessonUrl' => $nextLessonUrl,
+                    'isCompletedCurrent' => $isCompletedCurrent,
                 ]);
             } else {
                 return redirect()->back()->with('error', 'Bạn chưa hoàn thành bài học trước!');
             }
+        }
+
+        if ($lesson->is_sample) {
+            return view('frontend.video', [
+                'lesson' => $lesson,
+                'course' => $course,
+                'navigationChapters' => $navigationChapters,
+                'currentLessonId' => $lesson->id,
+                'isEnrolled' => $isEnrolled,
+                'completedLessonIds' => $completedLessonIds,
+                'nextLessonUrl' => $nextLessonUrl,
+                'isCompletedCurrent' => $isCompletedCurrent,
+            ]);
         }
 
         return redirect()->back()->with('error', 'Bạn chưa đăng ký khóa học!');

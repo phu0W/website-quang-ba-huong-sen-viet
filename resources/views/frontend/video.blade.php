@@ -2,7 +2,14 @@
 @section('custom')
 <script async src="https://www.youtube.com/iframe_api"></script>
 <script>
-    const allowedPercent = {{ $lesson->percent }};//giá trị số, gán dữ liệu độc lập để dễ quản lý, tránh lỗi
+    const allowedPercent = {{ $lesson->percent }};
+    const isEnrolled = {!! json_encode($isEnrolled) !!};
+    const isCompletedCurrent = {!! json_encode($isCompletedCurrent) !!};
+    @if ($nextLessonUrl)
+        const nextLessonUrl = "{{ $nextLessonUrl }}";
+    @else
+        const nextLessonUrl = null;
+    @endif
 </script>
 <script>
     var player;
@@ -13,10 +20,12 @@
     function onYouTubeIframeAPIReady() {
         console.log("YouTube API đã sẵn sàng, đang tạo player...");
         player = new YT.Player('player', {
-            videoId: '{{ $lesson->file_id }}', //gán tại chỗ, chèn vào object js trực tiếp
+            videoId: '{{ $lesson->file_id }}',
             playerVars: {
                 'enablejsapi': 1,
-                'origin': window.location.origin
+                'origin': window.location.origin,
+                controls: isCompletedCurrent ? 1 : 0, 
+                disablekb: isCompletedCurrent ? 0 : 1 
             },
             events: {
                 'onStateChange': onPlayerStateChange
@@ -34,7 +43,7 @@
             const duration = player.getDuration();
             const percent = (currentTime / duration) * 100;
 
-            if (percent > allowedPercent && !hasReported) {
+            if (percent > allowedPercent && !hasReported && isEnrolled && !isCompletedCurrent) {
                 reportProgress();
                 return;
             }
@@ -46,12 +55,20 @@
                     const duration = player.getDuration();
                     const percent = (currentTime / duration) * 100;
 
-                    if (percent > allowedPercent && !hasReported) {
+                    if (percent > allowedPercent && !hasReported && isEnrolled && !isCompletedCurrent) {
                         reportProgress();
                     }
                 }, 1000);
             }
 
+        } else if (event.data == YT.PlayerState.ENDED && isEnrolled) {
+            clearInterval(interval);
+            interval = null;
+            if (nextLessonUrl) {
+                window.location.href = nextLessonUrl;
+            } else {
+                alert("Đã hết bài học.");
+            }
         } else {
             // Nếu video tạm dừng hoặc dừng hẳn thì ngừng kiểm tra
             clearInterval(interval);
@@ -103,6 +120,9 @@
     
             <!-- Video Title -->
             <h2 class="video-title mt-3">{{ $lesson->name }}</h2>
+            @if ($isEnrolled)
+                <h5>Thời lượng đạt: {{$lesson->percent}} %</h5>
+            @endif
         </div>
     
         <div class="col-md-4">
@@ -113,7 +133,6 @@
             <div class="lessons-wrapper">
                 <div class="lesson-list">
                     <div class="list-group">
-
                         @foreach($navigationChapters as $chapter)
                             <div class="fw-bold m-2">{{ $chapter['title'] }}</div>
                             @foreach($chapter['items'] as $item)
@@ -149,6 +168,9 @@
                                         {{-- Hoàn thành --}}
                                         @if($item['type'] === 'lesson' && in_array($item['id'], $completedLessonIds))
                                             <span class="complete-text">Hoàn thành</span>
+                                        @endif
+                                        @if($item['type'] === 'exam' && $item['model']->is_sample && !$isEnrolled)
+                                            <span class="free-text">Miễn phí</span>
                                         @endif
                                     </div>
                                 </a>
