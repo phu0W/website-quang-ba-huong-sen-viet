@@ -1,0 +1,524 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+:root {
+    --primary: #09844a;
+    --primary-foreground: #ffffff;
+    --secondary: #f5f5f5;
+    --secondary-foreground: #111111;
+    --accent: #155332;
+    --accent-foreground: #ffffff;
+    --background: #ffffff;
+    --foreground: #111111;
+    --card: #ffffff;
+    --card-foreground: #111111;  
+    --border: #e5e5e5;
+    --input: #f5f5f5;
+    --ring: #09844a;
+    }
+
+.navbar-brand{
+    font-size: 1.15rem;
+    color: var(--primary);
+}
+.navbar-brand:hover{
+    color: var(--accent);
+}
+.nav-link{
+    margin-left: 10px;
+    margin-right: 10px;
+    color: var(--foreground);
+    text-transform: uppercase;
+}
+.nav-link:hover{
+    color: var(--accent);
+
+}
+
+.btn0{
+    height: 40px;
+    width: auto;
+    border-radius: 60px;
+    font-weight: 700;
+}
+.main{
+    background: url(./img/tc2.jpg) no-repeat;
+    background-size: cover;
+    height: 100vh;
+    background-position: 50% 50%;
+    width: 100%;
+}
+.main h1{
+    font-size: 4rem;
+    font-weight: 700;
+}
+
+.btn1{
+    height: 40px;
+    width: 150px;
+    outline: none;
+    border: none;
+    background: rgb(30, 25, 110);
+    color: white;
+    border-radius: 60px;
+    font-weight: 700;
+}
+.list1 a{
+    text-decoration: none;
+    color: black;
+}
+
+.list2 img{
+    height: 280px;
+}
+.pic1 img{
+    height: 220px;
+}
+.list3 a{
+    text-decoration: none;
+    color: black;
+}
+
+
+
+/* --------------------for index------------------------------- */
+.home-carousel .carousel-item img { 
+    width: 100vw; /* Chiều rộng 100% theo viewport */
+    height: 100vh; /* Chiều cao 100% viewport để luôn full màn hình */
+    object-fit: cover; /* Giữ tỷ lệ ảnh, không bị méo */
+}
+.carousel-caption {
+    background: rgba(0,0,0,0.5);
+    border-radius: var(--radius);
+    padding: 2rem;
+  }
+  .bg-image {
+    background: url('../img/bg.png') no-repeat center center;
+    background-size: cover; /* Ảnh sẽ tự động điều chỉnh để bao phủ toàn bộ section */
+    background-attachment: fixed; /* Tạo hiệu ứng parallax (nếu muốn) */
+    position: relative;
+    z-index: 1;
+}
+
+.value-card {
+    padding: 2rem;
+    background: var(--card);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);;
+    height: 100%;
+}
+.value-card:hover{
+    transform: translateY(-5px);
+    transition: transform 0.2s;
+}
+.value-card i {
+    color: var(--primary);
+}
+  
+.card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: transform 0.2s;
+  }
+  
+.card:hover {
+    transform: translateY(-5px);
+  }
+  
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+/* -------------news section for index ---------- */
+.news-card {
+position: relative; /* có vị trí để hỗ trợ xử lý phần tử con */
+overflow: hidden;
+border: none;
+box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+transition: transform 0.3s;
+}
+
+.news-card:hover {
+transform: translateY(-5px);
+}
+
+.news-card img {
+height: 500px;
+object-fit: cover;
+width: 100%;
+}
+/* phủ mờ cho ảnh, hiệu ứng filter */
+.news-card .card-img-overlay {
+background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%);
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+padding: 2rem;
+}
+
+.news-card .card-title {
+display: block;
+color: var(--primary-foreground);
+font-size: 2rem;
+font-weight: 700;
+margin-bottom: 1rem;
+text-decoration: none;
+}
+
+.news-card .card-text {
+color: rgba(255,255,255,0.9);
+font-size: 1.1rem;
+}
+/*-------------các phần tử của news card----------------- */
+.news-card .meta-info {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 1rem;
+}
+
+.news-card .date {
+color: rgba(255,255,255,0.8);
+}
+
+.small-news-card {
+border: 1px solid var(--border);
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+transition: transform 0.2s;
+}
+
+.small-news-card:hover {
+transform: translateY(-3px);
+}
+
+.small-news-card img {
+height: 100%;
+object-fit: cover;
+}
+
+.small-news-card .card-title {
+display:block;
+font-size: 1rem;
+font-weight: 600;
+margin-bottom: 0.5rem;
+text-decoration: none;
+text-decoration: none;
+}
+
+.small-news-card .card-body {
+padding: 1rem;
+}
+
+.badge {
+font-weight: 500;
+padding: 0.5rem 1rem;
+}
+
+/* -------------danh mục khoá học------------ */
+.category-card {
+background: var(--card);
+border-radius: 16px;
+border: 1px solid var(--border);
+transition: 0.3s;
+cursor: pointer;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.category-card img {
+width: 74px;
+height: 74px;
+object-fit: cover;
+border: 3px solid var(--accent);
+}
+
+.category-title {
+color: var(--card-foreground);
+font-size: 1.25rem;
+font-weight: 600;
+text-decoration: none;
+}
+
+.category-card .card-body{
+padding: 1.5rem;
+}
+/* -----------------------------for contact--------------------- */
+.form-floating label {
+    color: #6c757d;
+}
+.invalid-feedback {
+    color: #dc3545;
+}
+/* --------------------for course-detail----------------------------- */
+.outercard-section.card {
+    transition: none !important;
+    transform: none !important;
+}
+
+.lessons-container {
+    max-width: 700px; 
+}
+.lessons-wrapper {
+    max-height: 300px; /* Điều chỉnh chiều cao của danh sách */
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+/* Tùy chỉnh thanh cuộn */
+.lessons-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+.lessons-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.lessons-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+.lessons-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.lessons-list .lesson-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Đưa phần trạng thái sang phải */
+    gap: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.lessons-list .lesson-item:hover {
+    background-color: #f8f9fa;
+}
+
+.lesson-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1rem;
+    text-decoration: none;
+    color: inherit;
+    flex-grow: 1;
+    overflow: hidden; /* Tránh tiêu đề quá dài */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lessons-list .lesson-item.free i {
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.lessons-list .lesson-item.locked i {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.status-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap; /* Không xuống dòng */
+}
+
+.free-text, .complete-text {
+    font-size: 0.8rem;
+    margin-left: 0;
+    font-style: italic;
+}
+
+.free-text {
+    color: var(--primary);
+}
+
+.complete-text {
+    color: green;
+}
+.course-details {
+    border-radius: var(--radius);
+    overflow: hidden;
+    }
+
+.stars {
+    color: #f59e0b;
+    }   
+.feedback-card {
+    background: var(--card);
+    border-color: var(--border) !important;
+    }
+.feedback-card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.2s;
+}
+/* --------------for lesson videos------------- */
+.video-container {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 30px;
+}
+.lesson-list-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+/* Custom scrollbar for webkit browsers */
+.lesson-list-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+.lesson-list-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.lesson-list-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+.lesson-list-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.course-name {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+}
+.lesson-list .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    gap: 10px; /* Add gap between icon and title */
+}
+.lesson-list .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+.lesson-list .list-group-item.active {
+    background-color: var(--primary);
+    color: white;
+}
+.lesson-list .list-group-item-title {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    flex-grow: 1; /* Allow title to take remaining space */
+}
+.lesson-icon {
+    font-size: 1rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+}
+.lesson-list .list-group-item.active .lesson-icon {
+    color: white;
+}
+.lesson-list .list-group-item .complete-text {
+    color: var(--primary);
+    font-size: 0.8rem;
+    margin-left: 0;
+    font-style: italic;
+}
+
+.lesson-list .list-group-item.active .complete-text {
+    color: #ffffff;
+    background-color: var(--primary);
+    padding: 2px 6px;
+    border-radius: 8px;
+}
+.video-title {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    /* text-align: center; */
+}
+
+
+/* --------------footer------------ */
+.footer ul li i {
+    margin-right: 10px; 
+    vertical-align: middle; /* Căn giữa icon với text */
+}
+.footer h5 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--primary);
+  }
+.footer h5 i {
+    color: var(--primary); 
+  }
+.footer h6 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 1rem;
+  }
+.footer p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+.footer .text-muted {
+    color: var(--border) !important;
+  }
+
+@media (max-width: 768px) {
+    .carousel-caption h1 {
+        font-size: 1.5rem;
+    }
+
+    .carousel-caption p {
+        font-size: 1rem;
+    }
+
+    .carousel-caption a {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    .bg-image {
+        min-height: 300px;
+    }
+    .price-new {
+      color: #ff7a00;
+      font-weight: bold;
+    }
+    .price-old {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .card {
+      border-radius: 10px;
+    }
+    .btn-orange {
+      background-color: #ff7a00;
+      color: white;
+      border: none;
+    }
+    .btn-orange:hover {
+      background-color: #e66900;
+    }
+}
+.price-new {
+    color: #ff7a00;
+    font-weight: bold;
+}
+.price-old {
+    text-decoration: line-through;
+    color: gray;
+}
+.card {
+    border-radius: 10px;
+}
+.btn-orange {
+    background-color: #ff7a00;
+    color: white;
+    border: none;
+}
+.btn-orange:hover {
+    background-color: #e66900;
+}
